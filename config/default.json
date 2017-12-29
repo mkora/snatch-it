@@ -1,0 +1,20 @@
+{
+  "browser": { 
+    "headless": false
+  },
+  "paths": {
+    "storage": "./data/",
+    "mainFolder": "books/",
+    "defaultFolder": "page-1"
+  },
+  "urls": {
+    "start": "http://books.toscrape.com/"
+  },
+  "selectors": {
+    "image": ".product_pod img",
+    "nextPage": "ul.pager li.next a"
+  },
+  "extra": {
+    "pagesLimit": 100
+  }
+}
