@@ -43,6 +43,9 @@ const makeDir = async (fromUrl) => {
  * @return {array[{url: '..', alt: '..'}]} images' urls
  */
 const getLinks = async (imgPage) => {
+  // eslint-disable-next-line no-undef
+  await imgPage.evaluate(() => Promise.resolve(window.scrollTo(0, document.body.scrollHeight)));
+
   const imgSelector = config.get('selectors.image');
 
   const result = await imgPage.evaluate(async (selector) => {
@@ -140,9 +143,12 @@ const grinch = async () => {
   // wait for the new page to open
   const page = await browser.newPage();
   // tell the page to navigate to a URL and pause until the page has loaded
-  await page.goto(config.get('urls.start'));
-
   let pageUrl = config.get('urls.start');
+  await page.goto(pageUrl, {
+    timeout: 5000000,
+    waitUntil: 'networkidle0',
+  });
+
   let limit = 0; // nobody wants to stuck here forever
 
   // visit all pages
@@ -180,7 +186,10 @@ const grinch = async () => {
     // go to the next page
     try {
       // it will be rejected when  we reach the page after last
-      await page.click(config.get('selectors.nextPage'));
+      await page.click(config.get('selectors.nextPage'), {
+        timeout: 5000000,
+        waitUntil: 'networkidle0',
+      });
       pageUrl = await page.url();
     } catch (err) {
       await browser.close();
