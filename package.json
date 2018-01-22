@@ -16,7 +16,9 @@
     "eslint-plugin-import": "^2.8.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "lint": "eslint src/**/*.js",
+    "test": "echo \"TODO!\" && exit 1"
   },
   "author": "",
   "license": "ISC"
