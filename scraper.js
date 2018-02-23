@@ -12,22 +12,14 @@ const fetch = require('node-fetch');
  * (when there is a pagination it's better to
  * store pics in individual folders)
  *
- * @param {string} fromUrl
+ * @param {string} i
  * @return {string} created folder name
  */
-const makeDir = async (fromUrl) => {
-  const tmp = new URL(fromUrl);
-  const parts = tmp.pathname.split('/'); // for retriving last part of an url
-
+const makeDir = async (i = 0) => {
+  const prefix = config.get('paths.prefixChapterFolder');
   const folder = path.join(
-    config.get('paths.storage'), (
-      config.get('paths.mainFolder') +
-      (
-        tmp.pathname === '/'
-          ? config.get('paths.defaultFolder')
-          : parts[parts.length - 1].replace(/(\.[\w\d]*)$/, '')
-      )
-    )
+    config.get('paths.storage'),
+    `${config.get('paths.mainFolder')}${prefix}${i}`
   );
 
   await mkDir(folder);
@@ -149,19 +141,18 @@ const grinch = async () => {
     waitUntil: 'networkidle0',
   });
 
-  let limit = 0; // nobody wants to stuck here forever
+  let counter = 0; // nobody wants to stuck here forever
 
   // visit all pages
   /* eslint no-constant-condition: ["error", { "checkLoops": false }] */
-  /* eslint-disable no-await-in-loop */ // I'm really sorry!
-  /* eslint-disable no-loop-func */ // I'm really really sorry!
-  while (true || limit < config.get('extra.pagesLimit')) {
-    limit += 1;
-
+  /* eslint-disable no-await-in-loop */
+  /* eslint-disable no-loop-func */
+  while (true || counter < config.get('extra.pagesLimit')) {
     await page.waitFor(3000);
+    counter += 1;
 
     // create a page folder
-    const imageFolder = await makeDir(pageUrl);
+    const imageFolder = await makeDir(counter);
 
     // find all images and return all theirs URL
     const links = await getLinks(page);
@@ -191,6 +182,7 @@ const grinch = async () => {
         waitUntil: 'networkidle0',
       });
       pageUrl = await page.url();
+      await page.waitFor(3000);
     } catch (err) {
       await browser.close();
       if (err.constructor.name === 'AssertionError') {
