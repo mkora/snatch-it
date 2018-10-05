@@ -37,7 +37,7 @@ npm start
   "paths": {
     "storage": "./data/",
     "mainFolder": "books/",
-    "defaultFolder": "page-1"
+    "prefixChapterFolder": "page-"
   },
   "urls": {
     "start": "http://books.toscrape.com/"
